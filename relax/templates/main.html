@@ -1,0 +1,36 @@
+<!-- Main temmplate is template where we can generate main code it
+    means that we can write block of code which will 
+be included in another templates -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Relax Place</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li style="color: red;">{{ message }} !!</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+   
+
+
+    {% block content %}
+    {% endblock %}
+</body>
+
+</html>
