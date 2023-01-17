@@ -1,13 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
-    </head>
-<body>
-    <h1>THIS IS {{ room.name }} ROOM </h1>
-</body>
-</html>
+{% extends 'main.html' %}
+
+
+{% block content %}
+<h2> {{ room.name }} </h2>
+<p> {{room.description}} </p>
+
+
+<div class="content-wrapper">
+    <h3>Conversation</h3>
+    <hr>
+    {% for message in room_messages %}
+    <div>
+        <small>@{{ message.user }} {{message.created | timesince }} ago</small>
+        <p>{{ message.body }}</p>
+        <hr>
+
+    </div>
+    {% endfor %}
+</div>
+
+{% if request.user.is_authenticated %}
+<div>
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="text" name="body" placeholder="Write your comment here...">
+    </form>
+</div>
+{% endif %}
+{% endblock %}

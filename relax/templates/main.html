@@ -21,7 +21,7 @@ be included in another templates -->
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-        <li style="color: red;">{{ message }} !!</li>
+        <li style="color: red;">{{ message }} </li>
         {% endfor %}
     </ul>
     {% endif %}
@@ -30,6 +30,7 @@ be included in another templates -->
 
 
     {% block content %}
+
     {% endblock %}
 </body>
 
