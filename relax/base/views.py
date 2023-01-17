@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -10,12 +10,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 # User login/out/register section
+
+
 def loginUser(request):
     page = 'login'
-    
+
     if request.user.is_authenticated:
         return redirect('home')
-    
 
     if request.method == "POST":
         username = request.POST.get('username').lower()
@@ -33,8 +34,8 @@ def loginUser(request):
             return redirect('home')
         else:
             messages.error(request, "Username OR  password Incorect")
-  
-    context = {'page':page}
+
+    context = {'page': page}
     return render(request, 'login_register.html', context)
 
 
@@ -42,18 +43,22 @@ def logoutUser(request):
     logout(request)
     return redirect('home')
 
+
 def registerUser(request):
     form = UserCreationForm()
-    if request.method =='POST':
-        form=UserCreationForm(request.POST)
-        if form.is_valid:
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
             user = form.save(commit=False)
-            user = user.username.lower()
+            user.username = user.username.lower()
             user.save()
-            login(request,user)
+            login(request, user)
             return redirect('home')
-    return render(request, 'login_register.html',{'form':form})
-    
+        else:
+            messages.error(request, "An error ocurred due the registration !")
+    return render(request, 'login_register.html', {'form': form})
+
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') else ''
@@ -73,12 +78,25 @@ def home(request):
 
 def room(request, pk):
     chased_room = Room.objects.get(id=pk)
+    room_messages = chased_room.message_set.all().order_by('-created')
+    
+    if request.method == "POST":
+        message= Message.objects.create(
+            user = request.user,
+            room=chased_room,
+            body = request.POST.get('body')
+        )
+        return redirect('room',pk = chased_room.id)
     context = {
-        'room': chased_room
+        
+        'room': chased_room,
+        'room_messages':room_messages
     }
     return render(request, 'room.html', context)
 
 # Room CRUD section
+
+
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm()
@@ -92,6 +110,7 @@ def createRoom(request):
         'form': form
     }
     return render(request, 'room_form.html', context)
+
 
 @login_required(login_url='login')
 def updateRoom(request, pk):
@@ -123,8 +142,3 @@ def deleteRoom(request, pk):
         'obj': room
     }
     return render(request, 'delete.html', context)
-
-
-
-
-
