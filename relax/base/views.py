@@ -77,20 +77,26 @@ def home(request):
 
 
 def room(request, pk):
+
+    # TODO dont forget to rename all room to chased_room
+
     chased_room = Room.objects.get(id=pk)
     room_messages = chased_room.message_set.all().order_by('-created')
-    
+    participants = chased_room.participants.all()
+
     if request.method == "POST":
-        message= Message.objects.create(
-            user = request.user,
+        message = Message.objects.create(
+            user=request.user,
             room=chased_room,
-            body = request.POST.get('body')
+            body=request.POST.get('body')
         )
-        return redirect('room',pk = chased_room.id)
+        chased_room.participants.add(request.user)
+        return redirect('room', pk=chased_room.id)
     context = {
-        
+
         'room': chased_room,
-        'room_messages':room_messages
+        'room_messages': room_messages,
+        'participants': participants
     }
     return render(request, 'room.html', context)
 
@@ -142,3 +148,19 @@ def deleteRoom(request, pk):
         'obj': room
     }
     return render(request, 'delete.html', context)
+
+
+@login_required(login_url='login')
+def deleteMessage(request, pk):
+    message = Message.objects.get(id = pk)
+
+    if request.user != message.user:
+        return HttpResponse('You are not allowed to delete message!!')
+
+    if request.method == 'POST':
+        message.delete()
+        return redirect('room')
+    context={
+        'obj':message
+    }
+    return render(request,'delete.html', context)
