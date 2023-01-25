@@ -21,7 +21,7 @@ class Room(models.Model):
             return str(self.name)
 
     class Meta:
-        ordering = ['-updated', '-created'] #when we put minus sign in front of order field it means order were be descending (from the newest to the oldest)
+        ordering = ['-updated', '-created'] #when we put minus sign in front of order field it means orders were be descending (from the newest to the oldest)
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -35,5 +35,9 @@ class Message(models.Model):
     # auto_now = True takes snapshot whenever this field bein filled
     updated = models.DateTimeField(auto_now=True)
 
+
+    class Meta:
+        ordering = ['updated', '-created']  
+
     def __str__(self):
-        return self.body
+        return self.body[:50]
