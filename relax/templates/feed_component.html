@@ -1,11 +1,21 @@
-{% if request.user == room.host %}
-    <a href="{% url 'delete-room' room.id %}">Delete</a>
-    <a href="{% url 'update-room' room.id %}">Edit</a>
-    <h3> <a href="{% url 'room' room.id %}">{{room.name}}</a></h3>
-    <span>@{{room.host.username}}</span>
-{% else %}
-    <span>@{{room.host.username}}</span>
-    <h3> <a href="{% url 'room' room.id %}">{{room.name}}</a></h3>
-    <small>{{room.topic.name}}</small>
-{% endif %}
-<hr>
+<!-- TODO make some changes in thios template something went wrong -->
+
+
+<div>
+    {% for room in rooms %}
+    <div>
+        <a href="{% url 'user-profile' room.host.id %}">@{{room.host.username}}</a>
+        <br>
+        <br>
+        {% if request.user == room.host %}
+        <a href="{% url 'update-room' room.id %}">Edit</a>
+        <a href="{% url 'delete-room' room.id %}">Delete</a>
+        {% endif %}
+
+        <h3> {{ room.id }} --<a href="{% url 'room' room.id %}">{{room.name}}</a></h3>
+        <small>{{room.topic.name}}</small>
+        <hr>
+    </div>
+
+    {% endfor %}
+</div>
