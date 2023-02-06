@@ -15,7 +15,7 @@
               </path>
             </svg>
           </a>
-          <h3>Study Room</h3>
+          <h3>Chat Room</h3>
         </div>
         {% if room.host == request.user %}
         <div class="room__topRight">
@@ -110,15 +110,20 @@
             {% endfor %}
           </div>
         </div>
-
       </div>
+
       <div class="room__message">
+        {% if request.user.is_authenticated %}
         <form action="" method="POST">
           {% csrf_token %}
           <input name="body" placeholder="Write your message here..." />
         </form>
+        {% else %}
+        <h2>You need to <a href="{% url 'login' %}">LOGIN </a>  first</h2>
+        {% endif %}
       </div>
     </div>
+    
     <!-- Room End -->
 
     <!--   Start -->
